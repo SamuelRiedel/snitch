@@ -73,3 +73,8 @@ pub struct DmaState {
     reps: u32,
     done_id: u32,
 }
+
+/// A representation of a configuration file.
+#[derive(serde::Serialize, serde::Deserialize, Debug, Default)]
+#[repr(C)]
+pub struct Configuration {}

@@ -94,6 +94,12 @@ fn main() -> Result<()> {
                 .help("Number of clusters to simulate"),
         )
         .arg(
+            Arg::with_name("configuration")
+                .long("configuration")
+                .takes_value(true)
+                .help("A configuration file describing the architecture"),
+        )
+        .arg(
             Arg::with_name("base-hartid")
                 .long("base-hartid")
                 .takes_value(true)
@@ -169,6 +175,13 @@ fn main() -> Result<()> {
     matches
         .value_of("base-hartid")
         .map(|x| engine.base_hartid = x.parse().unwrap());
+
+    if let Some(config_file) = matches.value_of("configuration") {
+        let config: String = std::fs::read_to_string(config_file)?.parse()?;
+        let config: serde_json::Value =
+            serde_json::from_str(&config).expect("error while reading json");
+        engine.config = config
+    }
 
     // Read the binary.
     let path = Path::new(matches.value_of("binary").unwrap());

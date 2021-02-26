@@ -19,7 +19,7 @@ use std::{
     },
 };
 
-pub use crate::runtime::{Cpu, CpuState, DmaState, SsrState};
+pub use crate::runtime::{Configuration, Cpu, CpuState, DmaState, SsrState};
 
 /// An execution engine.
 pub struct Engine {
@@ -45,6 +45,8 @@ pub struct Engine {
     pub num_cores: usize,
     /// The number of clusters.
     pub num_clusters: usize,
+    /// The number of clusters.
+    pub config: serde_json::Value,
     /// The global memory.
     pub memory: Mutex<HashMap<u64, u32>>,
     /// The per-core putchar buffers (per hartid).
@@ -101,6 +103,7 @@ impl Engine {
             base_hartid: 0,
             num_cores: 1,
             num_clusters: 1,
+            config: Default::default(),
             memory: Default::default(),
             putchar_buffer: Default::default(),
         }

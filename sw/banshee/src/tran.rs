@@ -2158,12 +2158,20 @@ impl<'a> InstructionTranslator<'a> {
             });
 
             let latency = if let Some(access) = mem_access {
+                // Check config
+
+                let tcdm_latency = self.section.engine.config.get("tcdm_latency");
+                let tcdm_latency = if let Some(val) = tcdm_latency {val.as_u64()} else {Some(3)};
+                let tcdm_latency = if let Some(val) = tcdm_latency {val} else {3};
+                let dram_latency = self.section.engine.config.get("dram_latency");
+                let dram_latency = if let Some(val) = dram_latency {val.as_u64()} else {Some(10)};
+                let dram_latency = if let Some(val) = dram_latency {val} else {10};
                 let (is_tcdm, _tcdm_ptr) = self.emit_tcdm_check(access.1);
                 LLVMBuildSelect(
                     self.builder,
                     is_tcdm,
-                    LLVMConstInt(LLVMTypeOf(max_cycle), 3, 0),
-                    LLVMConstInt(LLVMTypeOf(max_cycle), 10, 0),
+                    LLVMConstInt(LLVMTypeOf(max_cycle), tcdm_latency, 0),
+                    LLVMConstInt(LLVMTypeOf(max_cycle), dram_latency, 0),
                     NONAME,
                 )
             } else {
