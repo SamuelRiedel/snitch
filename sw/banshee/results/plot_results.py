@@ -31,14 +31,15 @@ with open('results.log', 'r') as f:
             if 'k' in num[2]: perf = perf * 10 ** 3
             if 'M' in num[2]: perf = perf * 10 ** 6
             if 'G' in num[2]: perf = perf * 10 ** 9
-            if plot_all or not trace:
-                if not plot_all: perf = perf / 10 ** 6
+            if plot_all or trace:
+                if not plot_all: perf = perf / 10 ** 3
                 df = df.append({'cores': cores, 'flags': (trace, latency), 'perf': perf}, ignore_index=True)
         # print("Cores {}, Latency {}, Trace {}: {} inst/s".format(cores, latency, trace, perf))
 
 sns.set_style("whitegrid", {'grid.linestyle': '--'})
-sns.set_palette("mako", 4)
-
+pal = sns.color_palette("mako", 4)
+sns.set_palette(pal[2:])
+col = pal.as_hex()
 # penguins = sns.load_dataset("penguins")
 
 
@@ -58,12 +59,13 @@ if plot_all:
     g.ax.yaxis.set_minor_formatter(ticker.NullFormatter())
     g.ax.set_yscale('log')
 else:
-    g.set_axis_labels("Cores", "Performance [MInst/s]")
+    g.set_axis_labels("Cores", "Performance [kInst/s]")
 
 g.ax.grid(True, which="both", ls="--", c='gray')
 # g.fig.get_axes()[0].legend(loc='lower left')
 g.legend.set_title("Flags")
 new_labels = ['None', 'Latency', 'Tracing', 'Tracing & Latency']
+new_labels = new_labels[2:]
 for t, l in zip(g._legend.texts, new_labels): t.set_text(l)
 
 g.savefig("output.pdf")
