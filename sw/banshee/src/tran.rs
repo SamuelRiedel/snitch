@@ -1555,27 +1555,33 @@ impl<'a> InstructionTranslator<'a> {
             riscv::OpcodeRdRmRs1Rs2Rs3::FmaddS
             | riscv::OpcodeRdRmRs1Rs2Rs3::FmsubS
             | riscv::OpcodeRdRmRs1Rs2Rs3::FnmaddS
-            | riscv::OpcodeRdRmRs1Rs2Rs3::FnmsubS => self.write_freg_f32(
-                data.rd,
-                self.emit_fmadd(
-                    data,
-                    self.read_freg_f32(data.rs1),
-                    self.read_freg_f32(data.rs2),
-                    self.read_freg_f32(data.rs3),
-                )?,
-            ),
+            | riscv::OpcodeRdRmRs1Rs2Rs3::FnmsubS => {
+                self.latency.set(3);
+                self.write_freg_f32(
+                    data.rd,
+                    self.emit_fmadd(
+                        data,
+                        self.read_freg_f32(data.rs1),
+                        self.read_freg_f32(data.rs2),
+                        self.read_freg_f32(data.rs3),
+                    )?,
+                )
+            }
             riscv::OpcodeRdRmRs1Rs2Rs3::FmaddD
             | riscv::OpcodeRdRmRs1Rs2Rs3::FmsubD
             | riscv::OpcodeRdRmRs1Rs2Rs3::FnmaddD
-            | riscv::OpcodeRdRmRs1Rs2Rs3::FnmsubD => self.write_freg_f64(
-                data.rd,
-                self.emit_fmadd(
-                    data,
-                    self.read_freg_f64(data.rs1),
-                    self.read_freg_f64(data.rs2),
-                    self.read_freg_f64(data.rs3),
-                )?,
-            ),
+            | riscv::OpcodeRdRmRs1Rs2Rs3::FnmsubD => {
+                self.latency.set(4);
+                self.write_freg_f64(
+                    data.rd,
+                    self.emit_fmadd(
+                        data,
+                        self.read_freg_f64(data.rs1),
+                        self.read_freg_f64(data.rs2),
+                        self.read_freg_f64(data.rs3),
+                    )?,
+                )
+            }
             _ => bail!("Unsupported opcode {}", data.op),
         };
         Ok(())
