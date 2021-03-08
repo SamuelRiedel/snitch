@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 
 # Configure
-plot_all = False
+plot_all = True
 
 # Read the data
 p_run = re.compile("[a-zA-z0-9\s]*\(([0-9]*)\).*:([\s\-a-zA-Z]*)")
@@ -38,10 +38,10 @@ with open('results.log', 'r') as f:
 
 sns.set_style("whitegrid", {'grid.linestyle': '--'})
 pal = sns.color_palette("mako", 4)
-sns.set_palette(pal[2:])
-col = pal.as_hex()
+# sns.set_palette(pal[2:])
 # penguins = sns.load_dataset("penguins")
 
+print(df.groupby(['cores','flags']).mean())
 
 # Draw a nested barplot by species and sex
 fig, ax = plt.subplots()
@@ -65,7 +65,7 @@ g.ax.grid(True, which="both", ls="--", c='gray')
 # g.fig.get_axes()[0].legend(loc='lower left')
 g.legend.set_title("Flags")
 new_labels = ['None', 'Latency', 'Tracing', 'Tracing & Latency']
-new_labels = new_labels[2:]
+# new_labels = new_labels[2:]
 for t, l in zip(g._legend.texts, new_labels): t.set_text(l)
 
 g.savefig("output.pdf")
